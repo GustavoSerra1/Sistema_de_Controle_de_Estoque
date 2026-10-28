@@ -1,0 +1,149 @@
+#include <stdio.h>
+
+char nomes[10][50];
+float precos[10];
+int quantidades[10];
+int totalProdutos = 0;
+
+void cadastrar() {
+    if (totalProdutos >= 10) {
+        printf("Limite de produtos atingido!\n");
+        return;
+    }
+    printf("Nome do produto: ");
+    scanf(" %49[^\n]", nomes[totalProdutos]);
+
+    printf("Preco do produto: ");
+    scanf("%f", &precos[totalProdutos]);
+
+    printf("Quantidade: ");
+    scanf("%d", &quantidades[totalProdutos]);
+
+    if (precos[totalProdutos] < 0 || quantidades[totalProdutos] < 0) {
+        printf("Dados invalidos!\n");
+    }
+    else {
+        totalProdutos++;
+        printf("Produto cadastrado!\n");
+    }
+}
+void consultar() {
+    int i;
+    if (totalProdutos == 0) {
+        printf("Nenhum produto cadastrado.\n");
+    }
+    else {
+        for (i = 0; i < totalProdutos; i++) {
+            printf("\nCodigo: %d\n", i + 1);
+            printf("Nome: %s\n", nomes[i]);
+            printf("Preco: R$ %.2f\n", precos[i]);
+            printf("Quantidade: %d\n", quantidades[i]);
+        }
+    }
+}
+float calcularVenda(float preco, int quantidade) {
+    return preco * quantidade;
+}
+void vender() {
+    int codigo, quantidade;
+    float valor;
+    printf("Codigo do produto: ");
+    scanf("%d", &codigo);
+    if (codigo < 1 || codigo > totalProdutos) {
+        printf("Produto nao encontrado!\n");
+        return;
+    }
+    codigo = codigo - 1;
+    printf("Quantidade desejada: ");
+    scanf("%d", &quantidade);
+    if (quantidade <= 0) {
+        printf("Quantidade invalida!\n");
+    }
+    else if (quantidade <= quantidades[codigo]) {
+        quantidades[codigo] = quantidades[codigo] - quantidade;
+        valor = calcularVenda(precos[codigo], quantidade);
+        printf("Venda realizada!\n");
+        printf("Valor da venda: R$ %.2f\n", valor);
+    }
+    else {
+        printf("Estoque insuficiente!\n");
+    }
+}
+void reposicao() {
+    int i;
+    int encontrou = 0;
+    for (i = 0; i < totalProdutos; i++) {
+        if (quantidades[i] < 5) {
+            printf("\nProduto: %s\n", nomes[i]);
+            printf("Quantidade: %d\n", quantidades[i]);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum produto precisa de reposicao.\n");
+    }
+}
+void entrada() {
+    int codigo, quantidade;
+    printf("Codigo do produto: ");
+    scanf("%d", &codigo);
+    if (codigo < 1 || codigo > totalProdutos) {
+        printf("Produto nao encontrado!\n");
+        return;
+    }
+    codigo = codigo - 1;
+    printf("Quantidade recebida: ");
+    scanf("%d", &quantidade);
+    if (quantidade <= 0) {
+        printf("Quantidade invalida!\n");
+    }
+    else {
+        quantidades[codigo] = quantidades[codigo] + quantidade;
+        printf("Estoque atualizado!\n");
+    }
+}
+float valorEstoque() {
+    int i;
+    float total = 0;
+    for (i = 0; i < totalProdutos; i++) {
+        total = total + (precos[i] * quantidades[i]);
+    }
+    return total;
+}
+int main() {
+    int opcao = 0;
+    while (opcao != 6) {
+        printf("\n===== CONTROLE DE ESTOQUE =====\n");
+        printf("1 - Cadastrar produtos\n");
+        printf("2 - Consultar estoque\n");
+        printf("3 - Registrar venda\n");
+        printf("4 - Consultar reposicao\n");
+        printf("5 - Entrada de mercadorias\n");
+        printf("6 - Encerrar programa\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        if (opcao == 1) {
+            cadastrar();
+        }
+        else if (opcao == 2) {
+            consultar();
+        }
+        else if (opcao == 3) {
+            vender();
+        }
+        else if (opcao == 4) {
+            reposicao();
+        }
+        else if (opcao == 5) {
+            entrada();
+        }
+        else if (opcao == 6) {
+            printf("\nValor total do estoque: R$ %.2f\n", valorEstoque());
+            printf("Programa encerrado!\n");
+        }
+        else {
+            printf("Opcao invalida!\n");
+        }
+    }
+    return 0;
+}
